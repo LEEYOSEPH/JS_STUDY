@@ -59,3 +59,30 @@ console.log(typeof key); //symbol
 
 //객체 생성
 var obj = {};
+
+/* switch (표현식) {
+    case 표현식1:
+        switch 문의 표현식과 표현식1이 일치하면 실행될 문;
+        break;
+    case 표현식2:
+        switch 문의 표현식과 표현식2이 일치하면 실행될 문;
+        break;
+    default:
+        switch 문의 표현식과 일치하는 case 문이 없을 때 실행될 문;
+}
+
+for (변수 선언문 또는 할당문; 조건식; 증감식 ) {
+    조건식이 참인 경우 반복 실행될 문;
+} */
+
+var string = "Hello World";
+var search = "l";
+var count = 0;
+
+//문자열은 유사 배열이므로 for문으로 순회할 수 있다.
+for (var i = 0; i < string.length; i++) {
+  //'l'이 아니면 현시점에서 실행을 중단하고 반복문의 증감식으로 이동 한다.
+  if (string[i] !== search) continue;
+  count++;
+}
+console.log(count); // 3
