@@ -1,139 +1,76 @@
-// number type
-0 + '' // "0"
--0 + '' // "0"
-1 + '' // "1"
--1 + '' // "-1"
-NaN + '' // "NaN"
-Infinity + '' // "Infinity"
--Infinity + '' // "-Infinity"
+var person = {
+  name: "Lee",
+  sayHello: function () {
+    console.log(`Hello! My name is ${this.name}`);
+  },
+};
+console.log(typeof person); // object
 
-// boolean type
-true + '' // "true"
-false + '' // "false"
+var empty = {}; // empty object
+console.log(typeof empty); // object
 
-// null type
-null + '' // "null"
+var person = {
+  firstName: "GORO", // 식별자 네이밍 규칙을 준수하는 키
+  "last-name": "LEE", // 식별자 네이밍 규칙을 준수하지 않는 키
+};
 
-// undefined type
-undefined + '' // "undefined"
+var person = {
+  firstName: "GORO",
+  "last-name": "LEE", // SyntaxError: Unexpected token -
+};
 
-// symbol type
-(Symbol()) + '' // TypeError: canno convert a Symbol value to a string
+var obj = {};
+var key = "hello";
 
-// object type
-({}) + '' // "[object Object]"
-Math + '' // "[object Math]"
-[] + '' // ""
-[10, 20] + '' // "10,20"
+//ES5
+obj[key] = "world";
+//ES6
+// var obj = {[key]:"world"}
 
-    
-    
-// string type
-+ '' // 0
-+ '0'// 0
-+ '1'// 1
-+ 'string' // NaN
+console.log(obj); // {hello : "world"}
 
-//boolean type
-+ true // 1
-+ false // 0
+var foo = {
+  name: "LEE",
+  name: "Kim",
+};
+console.log(foo); // {name:"KIM"}
 
-//null type
-+ null // 0
+var person = {
+  name: "Lee",
+};
 
-//undefined type
-+ undefined // NaN
+//마침표 표기법
+console.log(person.name);
 
-// symbol type
-+ Symbol() // TypeError: Cannot convert a Symbol value to a number
+//대괄호 표기법
+console.log(person["name"]);
 
-// object type
-+ {} // NaN
-+ [] // 0
-+ [10, 20] // NaN
-    + (function () { }) // NaN
+var person = {
+  name: "LEE",
+};
+person.age = 20;
+console.log(person); // {name: "LEE", age: 20}
 
-//1.
-String(1); // "1"
-String(NaN); // "NaN"
-String(Infinity); // "Infinity"
-String(true); // "ture"
-String(false); // "false"
+var person = {
+  name: "LEE",
+};
+delete person.name;
 
-//2.
-(1).toString(); // "1"
-(true).toString(); // "true"
+//ES6
+let x = 1,
+  y = 7;
 
-//3.
-0 + '' // "0"
--0 + '' // "0"
-1 + '' // "1"
--1 + '' // "-1"
-NaN + '' // "NaN"
-Infinity + '' // "Infinity"
--Infinity + '' // "-Infinity"
+const obj = { x, y };
 
-// boolean type
-true + '' // "true"
-false + '' // "false"
+console.log(obj); // {x:1,y:2}
 
-// null type
-null + '' // "null"
+//ES6
+const obj = {
+  name: "LEE",
+  //메서드 축약 표현
+  sayHi() {
+    console.log("hello");
+  },
+};
 
-// undefined type
-undefined + '' // "undefined"
-
-//1.
-Number('0'); // 0
-Number(true); // 1
-Number(false); // 0
-
-//2.
-parseInt('0'); // 0
-parseFloat('10.53') // 10.53
-
-//3.
-+ '' // 0
-+ '0'// 0
-+ '1'// 1
-
-//4.
-'0' * 1; // 0
-'10.53' * 1; // 10.53
-
-//1.
-Boolean('x'); // ture
-Boolean(''); // false
-Boolean(0); //false
-Boolean(1); // ture
-Boolean(NaN); // false
-Boolean(Infinity); // ture
-Boolean(null); // false
-Boolean(undefined); // false
-
-//2.
-!!'x'; // true
-!!''; // false
-!!'false'// true
-!!0; //false
-!!1; // true
-
-var done = true;
-var message = '';
-
-message = done ? '완료' : '미완료';
-console.log(message); // 완료
-
-
-var elem = null;
-
-var value = elem?.value; // undefined
-
-var str = '';
-var length = str?.length; // 0
-
-var foo = null ?? 'default string';
-console.log(foo); // "default string"
-
-var foo = '' ?? 'default string';
-console.log(foo); // ""
+obj.sayHi(); // hello
