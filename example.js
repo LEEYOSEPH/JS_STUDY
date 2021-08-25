@@ -1,90 +1,98 @@
-//1. 함수는 무명의 리터럴로 생성할 수 있다.
-//2. 함수는 변수에 저장할 수 있다.
-// 런타임(할당 단계)에 함수 리터럴이 평가되어 함수 객체가 생성되고 변수에 할당된다.
+const obj = {};
+const parent = { c: 1 };
 
-const incrrease = function (num) {
-  return ++num;
-};
+// getter 함수인 get__proto__가 호출되어 obj 객체의 프로토타입을 취득
+obj.__proto__;
 
-const decrease = function (num) {
-  return --num;
-};
+// setter 함수인 set__proto__가 호출되어 obj 객체의 프로토타입을 교체
+obj.__proto__ = parent;
 
-//2. 함수는 객체에 저장할 수 있다.
-const predicates = { incrrease, decrease };
+console.log(obj.c); // 1
 
-//3. 함수의 매개변수에 전달할 수 있다.
-//4. 함수의 반환값으로 사용할 수 있다.
-function makeCounter(predicate) {
-  let num = 0;
+const parent = {};
+const child = {};
 
-  return function () {
-    num = predicate(num);
-    return num;
-  };
+//child의 프로토타입을 parent로 설정
+child.__proto__ = parent;
+//parent의 프로토타입을 child로 설정
+parent.__proto__ = child; // TypeError : Cyclic __proto__ value
+
+const obj = {};
+const parent = { x: 1 };
+
+Object.getPrototypeOf(obj); // obj.__proto__;
+
+Object.setPrototypeOf(obj, parent); // obj.__proto__ = parent;
+
+console.log(obj.x); // 1
+
+//함수 객체는 prototype 프로퍼티를 소유한다.
+(function () {}.hasOwnProperty("prototype")); // true
+
+//일반 객체는 prototype 프로퍼티를 소유하지 않는다.
+({}.hasOwnProperty("prototype")); //false
+
+//생성자 함수
+function Person(name) {
+  this.name = name;
 }
 
-// 3. 함수는 매개변수에게 함수를 전달할 수 있다.
-const increaser = makeCounter(predicates.incrrease);
-console.log(increaser()); //1
+const me = new Person("Lee");
 
-const decreaset = makeCounter(predicates.decrease);
-console.log(decrease()); // 0
+//me 객체의 생성자 함수는 Person 이다.
+console.log(me.constructor === Person); // true
 
-function sum() {
-  let res = 0;
+//함수 정의가 평가되어 함수 객체를 생성하는 시점에 프로토타입도 더불어 생성된다.
+console.log(Person.prototype); // {constructor : f}
 
-  // arguments 객체는 length 프로퍼티가 있는 유사 배열 객체이므로 for 문으로 순회할 수 있다.
-  for (let i = 0; i < arguments.length; i++) {
-    res += arguments[i];
+//생성자 함수
+function Person(name) {
+  this.name = name;
+}
+
+// 화살표 함수는 non-constructor다.
+const Person = (name) => {
+  this.name = name;
+};
+
+console.log(Person.prototype); // undefined
+
+const Person = (function () {
+  function Person(name) {
+    this.name = name;
   }
-  return res;
-}
 
-console.log(sum()); // 0
-console.log(sum(1, 2)); // 3
+  // 생성자 함수의 prototype 프로퍼티를 통해 프로토타입을 교체
+  Person.prototype = {
+    sayHello() {
+      console.log(`${this.name}`);
+    },
+  };
+  return Person;
+})();
+const me = new Person("Lee");
 
-function foo() {
-  console.log(foo.length); // 0
-}
+const Person = (function () {
+  function Person(name) {
+    this.name = name;
+  }
 
-function bar(x) {
-  return x;
-}
-console.log(bar.length); // 1
+  // 생성자 함수의 prototype 프로퍼티를 통해 프로토타입을 교체
+  Person.prototype = {
+    // constructor 프로퍼티와 생성자 함수 간의 연결을 설정
+    constructor: Person,
+    sayHello() {
+      console.log(`${this.name}`);
+    },
+  };
+  return Person;
+})();
+const me = new Person("Lee");
 
-function baz(z, y) {
-  return z * y;
-}
-console.log(baz.length); // 2
+/* 
+  key: 프로퍼티 키를 나타내는 문자열
+  object: 객체로 평가되는 표현식
+*/
+key in object
 
-// 기명 함수 표현식
-var namedFunc = function foo() {};
-console.log(namedFunc.name); // foo
-
-// 익명 함수 표현식
-var anonymousFunc = function () {};
-// ES5: name 프로퍼티는 빈 문자열을 값으로 갖는다.
-// ES6: name 프로퍼티는 함수 객체를 가리키는 변수 이름을 값으로 갖는다.
-console.log(anonymousFunc.name); // anonymousFunc
-
-// 함수 선언문(Function declaration)
-function bar() {}
-console.log(bar.name); // bar
-
-const obj = { a: 1 };
-
-// 객체 리터럴 방식으로 생성한 객체의 프로토타입 객체는 Object.prototype이다.
-console.log(obj.__proto__ === Object.prototype); // true
-
-// 객체 리터럴 방식으로 생성한 객체 프로토타입 객체인 Object.prototype의 프로퍼티를 상속받는다.
-// hasOwnProperty 메서드는 Object.prototype의 메서드다.
-
-console.log(obj.hasOwnProperty("a")); // true
-console.log(obj.hasOwnProperty("__proto__")); // false
-
-// 함수 객체는 prototype 프로퍼티를 소유한다.
-(function () {}.hasOwnProperty("prototype")); // ture
-
-// 일반 객체는 prototype 프로퍼티를 소유하지 않는다.
-({}.hasOwnProperty("prototype")); // false
+for(변수선언문 in 객체) {...}
