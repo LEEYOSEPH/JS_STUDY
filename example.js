@@ -1,52 +1,90 @@
-const person = new Object();
+//1. 함수는 무명의 리터럴로 생성할 수 있다.
+//2. 함수는 변수에 저장할 수 있다.
+// 런타임(할당 단계)에 함수 리터럴이 평가되어 함수 객체가 생성되고 변수에 할당된다.
 
-person.name = "lee";
-
-person.hello = function () {
-  console.log("hi");
+const incrrease = function (num) {
+  return ++num;
 };
 
-console.log(person); // {name: 'lee'}
-person.hello(); // hi
+const decrease = function (num) {
+  return --num;
+};
 
-//생성자 함수
-function Circle(radius) {
-  console.log(this); // Circle{}
-  this.radius = radius;
-  this.getDiameter = function () {
-    return 2 * this.radius;
+//2. 함수는 객체에 저장할 수 있다.
+const predicates = { incrrease, decrease };
+
+//3. 함수의 매개변수에 전달할 수 있다.
+//4. 함수의 반환값으로 사용할 수 있다.
+function makeCounter(predicate) {
+  let num = 0;
+
+  return function () {
+    num = predicate(num);
+    return num;
   };
 }
 
-//인스턴스 생성
-const circle1 = new Circle(5);
-const circle2 = new Circle(10);
+// 3. 함수는 매개변수에게 함수를 전달할 수 있다.
+const increaser = makeCounter(predicates.incrrease);
+console.log(increaser()); //1
 
-console.log(circle1.getDiameter); // 10
-console.log(circle2.getDiameter); //20
+const decreaset = makeCounter(predicates.decrease);
+console.log(decrease()); // 0
 
-function Circle(radius) {
-  // 1. 암묵적으로 빈 객체가 생성되고 this에 바인딩 된다.
+function sum() {
+  let res = 0;
 
-  // 2. this에 바인딩되어 있는 인스턴슬르 초기화 한다.
-  this.radius = radius;
-  this.getDiameter = function () {
-    return 2 * this.radius;
-  };
-
-  // 3. 암묵적으로 this를 반환한다.
-  // 명시적으로 객체를 반환하면 암묵적인 this 반환이 무시된다.
-  return {};
+  // arguments 객체는 length 프로퍼티가 있는 유사 배열 객체이므로 for 문으로 순회할 수 있다.
+  for (let i = 0; i < arguments.length; i++) {
+    res += arguments[i];
+  }
+  return res;
 }
 
-//인스턴스 생성
-const circle1 = new Circle(5);
-console.log(circle1); // {}
+console.log(sum()); // 0
+console.log(sum(1, 2)); // 3
 
 function foo() {
-  // 일반적인 함수로서 호출: [[call]]이 호출 된다.
-  foo();
-
-  // 생성자 함수로서 호출: [[Construct]]가 호출된다.
-  new foo();
+  console.log(foo.length); // 0
 }
+
+function bar(x) {
+  return x;
+}
+console.log(bar.length); // 1
+
+function baz(z, y) {
+  return z * y;
+}
+console.log(baz.length); // 2
+
+// 기명 함수 표현식
+var namedFunc = function foo() {};
+console.log(namedFunc.name); // foo
+
+// 익명 함수 표현식
+var anonymousFunc = function () {};
+// ES5: name 프로퍼티는 빈 문자열을 값으로 갖는다.
+// ES6: name 프로퍼티는 함수 객체를 가리키는 변수 이름을 값으로 갖는다.
+console.log(anonymousFunc.name); // anonymousFunc
+
+// 함수 선언문(Function declaration)
+function bar() {}
+console.log(bar.name); // bar
+
+const obj = { a: 1 };
+
+// 객체 리터럴 방식으로 생성한 객체의 프로토타입 객체는 Object.prototype이다.
+console.log(obj.__proto__ === Object.prototype); // true
+
+// 객체 리터럴 방식으로 생성한 객체 프로토타입 객체인 Object.prototype의 프로퍼티를 상속받는다.
+// hasOwnProperty 메서드는 Object.prototype의 메서드다.
+
+console.log(obj.hasOwnProperty("a")); // true
+console.log(obj.hasOwnProperty("__proto__")); // false
+
+// 함수 객체는 prototype 프로퍼티를 소유한다.
+(function () {}.hasOwnProperty("prototype")); // ture
+
+// 일반 객체는 prototype 프로퍼티를 소유하지 않는다.
+({}.hasOwnProperty("prototype")); // false
