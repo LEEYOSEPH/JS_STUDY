@@ -1,124 +1,61 @@
-function foo() {
-  console.log(this); // window
+const x = 1;
 
-  function bar() {
-    console.log(this); // window
-  }
+function foo() {
+  const x = 10;
+
+  // 상위 스코프는 함수 정의 환경(위치)에 따라 결정된다.
+  // 함수 호출 위치와 상위 스코프는 아무런 관계가 없다.
   bar();
 }
 
-var value = 1;
-
-const obj = {
-  value: 100,
-  foo() {
-    console.log(this); // {value : 100}
-
-    //콜백 함수 내부의 this에는 전역 객체가 바인딩된다.
-    setTimeout(function () {
-      console.log(this); //window
-      console.log(this.value); // 1
-    }, 100);
-
-    // 메서드 내에서 정의한 중첩 함수 this에도 전역 객체가 바인딩된다.
-    function bar() {
-      console.log(this); // window
-      console.log(this.value); //1
-    }
-  },
-};
-
-var value = 1;
-
-const obj = {
-  value: 100,
-  foo() {
-    console.log(this); // {value : 100}
-
-    const that = this;
-    //콜백 함수 내부의 this에는 전역 객체가 바인딩된다.
-    setTimeout(function () {
-      console.log(that.value); // 100
-    }, 100);
-  },
-};
-
-var value = 1;
-
-const obj = {
-  value: 100,
-  foo() {
-    //화살표 함수 내부의 this는 상위 스코프의 this를 가리킨다.
-    setTimeout(() => console.log(this.value), 100); // 100
-  },
-};
-obj.foo();
-
-const person = {
-  name: "Lee",
-  getName() {
-    // 메서드 내부의 this는 메서드를 호출한 객체에 바인딩된다.
-    return this.name;
-  },
-};
-
-//메서드 getName을 호출한 객체는 person이다.
-console.log(person.getName); // Lee
-
-function Person(name) {
-  this.name = name;
+// 함수 bar는 자신의 상위 스코프, 즉 전역 렉시컬 환경을 [[Environmnet]]에 저장하여 기억한다.
+function bar() {
+  console.log(x);
 }
 
-Person.prototype.getName = function () {
-  return this.name;
-};
+const x = 1;
 
-const me = new Person("Lee");
+// 1
+function outer() {
+  const x = 10;
+  const inner = function () {
+    console.log(x);
+  }; //2
+  return inner;
+}
 
-//getName 메서드를 호출한 객체는 me다.
-console.log(me.getName); // Lee
+// outer 함수를 호출하면 중첩 함수 inner를 반환한다.
+// 그리고 outer 함수의 실행 컨텍스트는 실행 컨텍스트 스택에서 팝되어 제거된다.
+const innerFunc = outer(); // 3
+innerFunc(); // 10
 
-Person.prototype.name = "Kim";
+// 카운트 상태 변경 함수
+const increase = (function () {
+  //카운트 상태 변수
+  let num = 0;
 
-//getName 메서드를 호출한 객체는 Person.prototype이다.
-console.log(Person.prototype.getName); // Kim
+  //클로저
+  return function () {
+    //카운트 상태를 1만큼 증가시킨다.
+    return ++num;
+  };
+})();
 
-//생성자 함수
-function Circle(radius) {
-  //생성자 함수 내부의  this는 생성자 함수가 생성할 인스턴스를 가리킨다.
-  this.radius = radius;
-  this.getDiameter = function () {
-    return 2 * this.radius;
+console.log(increase()); //1
+console.log(increase()); //2
+console.log(increase()); //3
+
+function Person(name, age) {
+  this.name = name; // public
+  let _age = age; // private
+
+  //인스턴스 메서드
+  this.sayHi = function () {
+    console.log(`hello i'm ${this.name}. ${_age}`);
   };
 }
 
-// 반지름이 5인 Circle 객체를 생성
-const circle1 = new Circle(5);
-// 반지름이 10인 Circle 객체를 생성
-const circle2 = new Circle(10);
-
-console.log(circle1.getDiameter()); // 10
-console.log(circle2.getDiameter()); // 20
-
-function getThisBinding() {
-  return this;
-}
-
-//this로 사용할 객체
-const thisArg = { a: 1 };
-
-console.log(getThisBinding()); // window
-
-console.log(getThisBinding().apply(thisArg)); // {a:1}
-console.log(getThisBinding().call); // {a:1}
-
-const person = {
-  name: "Lee",
-  foo(callback) {
-    console.log(this); // {value : 100}
-
-    const that = this;
-    //bind 메서드로 콜백 함수 내부의 this바인딩을 전달
-    setTimeout(callback.bind(this), 100);
-  },
-};
+const me = new Person("Lee", 20);
+me.sayHi(); // hello i'm Lee 20
+console.log(me.name); // Lee
+console.log(me._age); // undefined
