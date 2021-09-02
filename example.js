@@ -1,61 +1,71 @@
-const x = 1;
+class Person {}
 
-function foo() {
-  const x = 10;
+// 인스턴스 생성
+const me = new Person();
+console.log(me); // Person {}
 
-  // 상위 스코프는 함수 정의 환경(위치)에 따라 결정된다.
-  // 함수 호출 위치와 상위 스코프는 아무런 관계가 없다.
-  bar();
+class Person {
+  //생성자
+
+  constructor(name) {
+    //인스턴스 생성 및 초기화
+    this.name = name;
+  }
 }
 
-// 함수 bar는 자신의 상위 스코프, 즉 전역 렉시컬 환경을 [[Environmnet]]에 저장하여 기억한다.
-function bar() {
-  console.log(x);
+//생성자 함수
+function Person(name) {
+  this.name = name;
 }
 
-const x = 1;
+//프로토타입 메서드
+Person.prototype.sayHi = function () {
+  console.log(`${this.name}`);
+};
 
-// 1
-function outer() {
-  const x = 10;
-  const inner = function () {
-    console.log(x);
-  }; //2
-  return inner;
+const me = new Person("Lee");
+me.sayHi(); // Lee
+
+class Person {
+  // 생성자
+  constructor(name) {
+    //인스턴스 생성 및 초기화
+    this.name = name;
+  }
+
+  //정적 메서드
+  static sayHi() {
+    console.log("hi");
+  }
 }
 
-// outer 함수를 호출하면 중첩 함수 inner를 반환한다.
-// 그리고 outer 함수의 실행 컨텍스트는 실행 컨텍스트 스택에서 팝되어 제거된다.
-const innerFunc = outer(); // 3
-innerFunc(); // 10
+//수퍼(베이스/부모)클래스
+class Base {}
 
-// 카운트 상태 변경 함수
-const increase = (function () {
-  //카운트 상태 변수
-  let num = 0;
+//서브(파생자/자식)클랙스
+class Derived extends Base {}
 
-  //클로저
-  return function () {
-    //카운트 상태를 1만큼 증가시킨다.
-    return ++num;
-  };
-})();
+function Base() {}
+class Base2 {}
+let condition = true;
 
-console.log(increase()); //1
-console.log(increase()); //2
-console.log(increase()); //3
+//조건에 따라 동적으로 상속 대상을 결정하는 서브클래스
+class Derived extends (condition ? base1 : base2) {}
+const derived = new Derived();
+console.log(derived); // Derived {}
 
-function Person(name, age) {
-  this.name = name; // public
-  let _age = age; // private
+const obj = {
+  x: 1,
+  //foo is methods
 
-  //인스턴스 메서드
-  this.sayHi = function () {
-    console.log(`hello i'm ${this.name}. ${_age}`);
-  };
-}
+  foo() {
+    return this.x;
+  },
+  //bar에 바인딩된 함수는 메서드가 아닌 일반 함수다.
+  bar: function () {
+    return this.x;
+  },
+};
 
-const me = new Person("Lee", 20);
-me.sayHi(); // hello i'm Lee 20
-console.log(me.name); // Lee
-console.log(me._age); // undefined
+console.log(obj.foo()); // 1
+console.log(obj.bar()); // 1
