@@ -1,71 +1,54 @@
-class Person {}
-
-// 인스턴스 생성
-const me = new Person();
-console.log(me); // Person {}
-
-class Person {
-  //생성자
-
-  constructor(name) {
-    //인스턴스 생성 및 초기화
-    this.name = name;
-  }
-}
-
-//생성자 함수
-function Person(name) {
-  this.name = name;
-}
-
-//프로토타입 메서드
-Person.prototype.sayHi = function () {
-  console.log(`${this.name}`);
-};
-
-const me = new Person("Lee");
-me.sayHi(); // Lee
-
-class Person {
-  // 생성자
-  constructor(name) {
-    //인스턴스 생성 및 초기화
-    this.name = name;
-  }
-
-  //정적 메서드
-  static sayHi() {
-    console.log("hi");
-  }
-}
-
-//수퍼(베이스/부모)클래스
-class Base {}
-
-//서브(파생자/자식)클랙스
-class Derived extends Base {}
-
-function Base() {}
-class Base2 {}
-let condition = true;
-
-//조건에 따라 동적으로 상속 대상을 결정하는 서브클래스
-class Derived extends (condition ? base1 : base2) {}
-const derived = new Derived();
-console.log(derived); // Derived {}
-
-const obj = {
-  x: 1,
-  //foo is methods
-
-  foo() {
-    return this.x;
-  },
-  //bar에 바인딩된 함수는 메서드가 아닌 일반 함수다.
-  bar: function () {
-    return this.x;
+const base = {
+  name: "lee",
+  hi() {
+    return `Hi ${this.name}`;
   },
 };
 
-console.log(obj.foo()); // 1
-console.log(obj.bar()); // 1
+const derived = {
+  __proto__: base,
+  // hi is ES6 methods
+  hi() {
+    return `${super.hi()}`;
+  },
+};
+
+console.log(derived.hi());
+
+const multiply = (x, y) => x * y;
+multiply(2, 3); // 6
+
+const power = (x) => x ** 2;
+power(2); // 4
+
+//화살표 함수는 상위 스코프의 this를 참조한다.
+() => this.x;
+
+//익명 함수에 상위 스코프의 this를 주입한다. 위 화살표 함수와 동일하게 동작한다.
+(function () {
+  return this.x;
+}.bind(this));
+
+class Base {
+  constructor(name) {
+    this.name = name;
+  }
+  sayHi() {
+    return `${this.name}`;
+  }
+}
+
+class Derived extends Base {
+  // 화살표 함수의 super는 상위 스코프인 constructor의 super를 가리킨다.
+  sayHi = () => `${super.sayHi()}`;
+}
+
+const derived = new Derived("Lee");
+console.log(derived.sayhi()); // Lee
+
+function foo(...rest) {
+  //매개변수 rest는 인수들의 목록을 배열로 전달받는 Rest 파라미터다.
+  console.log(rest); // [1,2,3,4,5]
+}
+
+foo(1, 2, 3, 4, 5);
